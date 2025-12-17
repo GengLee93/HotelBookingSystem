@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Book: {{ service.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+
+        <!-- Service Details -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h1 class="card-title">Book: {{ service.name }}</h1>
+                <p class="card-text">{{ service.description }}</p>
+                <p class="card-text"><strong>Price:</strong> ${{ "%.2f"|format(service.price) }} / night</p>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Booking Form -->
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ url_for('main.create_booking') }}" method="POST">
+                    <input type="hidden" name="service_id" value="{{ service.id }}">
+
+                    <div class="mb-3">
+                        <label for="customer_name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="check_in_date" class="form-label">Check-in Date</label>
+                            <input type="date" class="form-control" id="check_in_date" name="check_in_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="check_out_date" class="form-label">Check-out Date</label>
+                            <input type="date" class="form-control" id="check_out_date" name="check_out_date" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

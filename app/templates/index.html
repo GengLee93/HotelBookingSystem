@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Homepage - Hotel Booking System{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-center">Welcome to Our Hotel</h1>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<!-- Booking Search Result -->
+{% if booking %}
+<div class="card mb-4 border-success">
+    <div class="card-header bg-success text-white">
+        Booking Found!
+    </div>
+    <div class="card-body">
+        <p><strong>Booking ID:</strong> {{ booking.id }}</p>
+        <p><strong>Service:</strong> {{ booking.service.name }}</p>
+        <p><strong>Booked by:</strong> {{ booking.user.name }} ({{ booking.user.email }})</p>
+        <p><strong>Check-in Date:</strong> {{ booking.check_in_date.strftime('%Y-%m-%d') }}</p>
+        <p><strong>Check-out Date:</strong> {{ booking.check_out_date.strftime('%Y-%m-%d') }}</p>
+    </div>
+</div>
+{% endif %}
+
+<!-- Booking Search Form -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Check Your Booking Status</h5>
+        <form action="{{ url_for('main.search_booking') }}" method="POST" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="booking_id" class="form-label">Booking ID:</label>
+                <input type="text" class="form-control" id="booking_id" name="booking_id" required>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Available Services -->
+<h2 class="mt-5 mb-3 text-center">Our Services</h2>
+<div class="row">
+    {% for service in services %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ service.name }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">${{ "%.2f"|format(service.price) }} / night</h6>
+                <p class="card-text">{{ service.description }}</p>
+                <a href="{{ url_for('main.booking_form', service_id=service.id) }}" class="btn btn-success mt-auto">Book Now</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="text-center mt-4">
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Admin Dashboard</a>
+</div>
+{% endblock %}
